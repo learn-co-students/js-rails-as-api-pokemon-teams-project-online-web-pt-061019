@@ -8,19 +8,20 @@ class PokemonsController < ApplicationController
 
     def create 
         # Option1
-        pokemon = Pokemon.new
-        pokemon.name = Faker::Name.first_name
-        pokemon.species = Faker::Games::Pokemon.name
-        pokemon.trainer_id = params[:trainer_id]
+        # pokemon = Pokemon.new
+        # pokemon.nickname = Faker::Name.first_name
+        # pokemon.species = Faker::Games::Pokemon.name
+        # pokemon.trainer_id = params[:trainer_id]
 
         # Option2
-        # name = Faker::Name.first_name
-        # species = Faker::Games::Pokemon.name
-        # trainer_id = params[:trainer_id]
-        # pokemon = Pokemon.new(nickname: name, species: species, trainer_id: trainer_id)
+        name = Faker::Name.first_name
+        species = Faker::Games::Pokemon.name
+        trainer_id = params[:trainer_id]
+        pokemon = Pokemon.new(nickname: name, species: species, trainer_id: trainer_id)
   
         if pokemon.save
-            render json: PokemonSerializer.new(pokemon)
+            # render json: PokemonSerializer.new(pokemon)
+            render json: pokemon
         else
             render json: {message: "Something's wrong! Could not save Pokemon"}
         end

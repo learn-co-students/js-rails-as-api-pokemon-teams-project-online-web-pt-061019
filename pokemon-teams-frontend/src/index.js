@@ -15,7 +15,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     })
     .then(function(json) {
       memoizedTrainers = json;
-      console.log(json.included);
       memoizedTrainers.forEach(trainer => {
         createTrainerHTML(trainer);
       })
@@ -29,13 +28,16 @@ function createTrainerHTML(trainer) {
   div.setAttribute("class", "card");
   div.setAttribute("data-id", trainer.id);
   div.innerHTML = `<p>${trainer.name}</p><button data-trainer-id="${trainer.id}">Add Pokemon</button><ul></ul>`;
+  let ul = div.querySelector("ul");
   let button = div.querySelector("button");
   button.addEventListener("click", (e) => {
-    addNewPokemon(trainer)
+    // if(trainer.pokemons.length < 6) {
+      addNewPokemon(trainer, ul)
+    // } else if(trainer.pokemons.length >= 6) {
+    //   console.log(trainer)
+    // }
   })
-  let ul = div.querySelector("ul");
   trainer.pokemons.forEach(pokemon => {
-    console.log(pokemon);
     createPokemonHTML(pokemon, ul)
   })
   main.appendChild(div);
@@ -43,38 +45,45 @@ function createTrainerHTML(trainer) {
 
 function createPokemonHTML(pokemon, ul) {
   let li = document.createElement("li");
-  li.innerHTML = `<li>${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+  li.innerHTML = `${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button>`
   ul.appendChild(li);
   let button = li.querySelector("button");
   button.addEventListener("click", function(e) {
-    releasePokemon(pokemon);
+    releasePokemon(pokemon, li);
   })
 };
 
-function releasePokemon(pokemon) {
-  return fetch(`${POKEMONS_URL}/${pokemon.id}`, {
+function releasePokemon(pokemon, li) {
+  fetch(`${POKEMONS_URL}/${pokemon.id}`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    }
   })
-  .then(response=>response.json())
-  // .then(console.log(response.json())
-  // {
-  //   console.log(response);
-  //   response.json();
-  //   // console.log(response.json());
-  //   // console.log(response.json());
-  //   // return response.json();
-  // }
-
-  // .then(function(object) {
-  //   console.log("deleted");
-  // })
+  .then(function(response) {
+    li.remove();
+    return response.text();
+  })
+  .catch(error=>console.log(error))
 };
 
-function addNewPokemon(trainer) {
-
-
+function addNewPokemon(trainer, ul) {
+  if (ul.getElementsByTagName("li").length < 6) {
+    fetch(POKEMONS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify({
+        "trainer_id": trainer.id
+      })
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(object) {
+      createPokemonHTML(object, ul);
+      console.log(object);
+    })
+  } else if (ul.getElementsByTagName("li").length >= 6) {
+    alert("the pokemon league forbids it!")
+  }
 };

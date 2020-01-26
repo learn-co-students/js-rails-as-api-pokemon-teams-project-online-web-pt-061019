@@ -1,6 +1,8 @@
 const BASE_URL = "http://localhost:3000"
 const TRAINERS_URL = `${BASE_URL}/trainers`
 const POKEMONS_URL = `${BASE_URL}/pokemons`
+const main = document.querySelector('main')
+
 
 function getTrainers(){
     fetch(TRAINERS_URL)
@@ -10,18 +12,32 @@ function getTrainers(){
 
 function renderTrainers(json){
     json.forEach(trainer => {
-          const main = document.querySelector('main')
-
-          let divCard = document.createElement('div')
+          const divCard = document.createElement('div')
           divCard.className = "card"
-          divCard.id = `${trainer.id}`
-          
+          divCard.dataset.id = `${trainer.id}`
+
           let name = document.createElement('p')
           name.innerText = `${trainer.name}`
           
           let addButton = document.createElement('button')
           addButton.innerHTML = "Add Pokemon"
-          addButton.id = `${trainer.id}`
+          addButton.dataset.id = `${trainer.id}`
+          addButton.addEventListener('click', function(event){
+            if (pokemonsUL.childElementCount < 6){
+                fetch(POKEMONS_URL, {
+                    method: "POST",
+                    headers: {
+                       'Content-Type': 'application/json',
+                       "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "trainer_id": event.target.dataset.id
+                    })
+               })
+                .then(response => response.json())
+                .then(json => console.log(json))
+            }
+          })
 
           let pokemonsUL = document.createElement('ul')
           pokemonsUL.innerHTML = ""
@@ -38,6 +54,9 @@ function renderTrainers(json){
     });
 };
 
+
 document.addEventListener("DOMContentLoaded", function(){
     getTrainers()
+
+
 })

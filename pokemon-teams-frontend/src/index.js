@@ -22,22 +22,6 @@ function renderTrainers(json){
           let addButton = document.createElement('button')
           addButton.innerHTML = "Add Pokemon"
           addButton.dataset.id = `${trainer.id}`
-          addButton.addEventListener('click', function(event){
-            if (pokemonsUL.childElementCount < 6){
-                fetch(POKEMONS_URL, {
-                    method: "POST",
-                    headers: {
-                       'Content-Type': 'application/json',
-                       "Accept": "application/json"
-                    },
-                    body: JSON.stringify({
-                        "trainer_id": event.target.dataset.id
-                    })
-               })
-                .then(response => response.json())
-                .then(json => console.log(json))
-            }
-          })
 
           let pokemonsUL = document.createElement('ul')
           pokemonsUL.innerHTML = ""
@@ -51,12 +35,45 @@ function renderTrainers(json){
           divCard.appendChild(addButton)
           divCard.appendChild(pokemonsUL)
           main.appendChild(divCard)
-    });
+    })
 };
 
+document.addEventListener('click', function(event){
+    if (event.target.innerHTML === "Add Pokemon"){
+        if (event.target.nextElementSibling.childElementCount < 6){
+            fetch(POKEMONS_URL, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Accept": "application/json"
+                    },
+                body: JSON.stringify({
+                    "trainer_id": event.target.dataset.id
+                    })
+            })
+            .then(resp => resp.json())
+            .then(pokemon => addPokemon(pokemon))
+        }
+    }
+    else if (event.target.innerHTML === "Release"){
+        event.target.parentElement.remove()
+        
+        fetch(POKEMONS_URL + `/${event.target.dataset.pokemonId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                "Accept": "application/json"
+                }
+        })
+        
+    }
+});
+
+function addPokemon(pokemon){
+    main.children[pokemon.trainer_id-1].lastElementChild.innerHTML += 
+    `<li>${pokemon.nickname} (${pokemon.species})<button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+}
 
 document.addEventListener("DOMContentLoaded", function(){
     getTrainers()
-
-
 })

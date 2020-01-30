@@ -4,5 +4,5 @@ class TrainersController < ApplicationController
     trainers = Trainer.all
     render json: trainers
   end
-  
+
 end

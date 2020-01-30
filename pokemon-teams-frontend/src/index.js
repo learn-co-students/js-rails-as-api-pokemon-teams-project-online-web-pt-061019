@@ -87,8 +87,10 @@ function addPokemon(e) {
   li.innerText = "Test Pokemon"
   li.append(button)
 
-  ul.appendChild(li)
+  if (ul.childElementCount < 6) {
+    ul.appendChild(li)
+  } else {
+    console.log("Sorry, a Pokemon trainer can only have 6 Pokemon on their team.")
+  }
+
 }
-
-
-// <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>

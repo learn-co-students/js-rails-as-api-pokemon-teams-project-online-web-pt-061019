@@ -80,6 +80,9 @@ function addPokemon(e) {
   button.classList = "release"
   button.setAttribute("data-pokemon-id", 99)
   button.innerText = "Release"
+  button.addEventListener('click', (e) => {
+    ul.removeChild(li)
+  });
 
   li.innerText = "Test Pokemon"
   li.append(button)

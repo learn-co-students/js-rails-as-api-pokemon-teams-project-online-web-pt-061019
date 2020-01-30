@@ -5,7 +5,6 @@ const POKEMONS_URL = `${BASE_URL}/pokemons`
 const main = document.querySelector("main")
 
 
-
 document.addEventListener('DOMContentLoaded', (event) => {
     console.log('DOM fully loaded and parsed');
 
@@ -59,6 +58,10 @@ function buildCard(json) {
     button.innerText = "Add Pokemon"
     button.setAttribute("data-trainer-id", trainer.id)
 
+    button.addEventListener('click', (e) => {
+        addPokemon(e);
+    });
+
     card.append(p)
     card.append(button)
     card.append(ul)
@@ -66,3 +69,23 @@ function buildCard(json) {
     main.appendChild(card)
   }
 }
+
+// When the "Add Pokemon" button is clicked, add a new pokemon to their team
+function addPokemon(e) {
+
+  let ul = e.target.nextSibling
+  let li = document.createElement("li")
+  let button = document.createElement("button")
+
+  button.classList = "release"
+  button.setAttribute("data-pokemon-id", 99)
+  button.innerText = "Release"
+
+  li.innerText = "Test Pokemon"
+  li.append(button)
+
+  ul.appendChild(li)
+}
+
+
+// <li>Jacey (Kakuna) <button class="release" data-pokemon-id="140">Release</button></li>

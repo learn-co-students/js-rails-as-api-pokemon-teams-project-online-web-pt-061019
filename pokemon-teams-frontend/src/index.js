@@ -21,7 +21,6 @@ function getTrainers() {
   })
   .then(function(json){
     // Use this data inside of `json` to do DOM manipulation
-    console.log(json)
     buildCard(json);
   })
 }
@@ -33,7 +32,6 @@ function getPokemons() {
   })
   .then(function(json){
     // Use this data inside of `json` to do DOM manipulation
-    console.log(json)
   })
 }
 

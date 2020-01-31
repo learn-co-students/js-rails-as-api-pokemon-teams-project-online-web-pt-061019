@@ -8,7 +8,7 @@ class TrainerSerializer
     options = {
       include: {
         pokemons: {
-          only: [:nickname, :species]
+          only: [:id, :nickname, :species, :trainer_id]
         }
       },
       except: [:updated_at, :created_at],

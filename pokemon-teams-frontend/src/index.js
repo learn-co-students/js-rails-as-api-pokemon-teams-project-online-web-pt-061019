@@ -50,6 +50,29 @@ function buildCard(json) {
     let button = document.createElement("button")
     let ul = document.createElement("ul")
 
+    // Add pokemon that already exist in that trainers team
+    // addPokemon(ul, trainer)
+
+    // console.log(trainer.pokemons)
+
+    for (let pokemon of trainer.pokemons) {
+      // console.log(pokemon)
+      let li = document.createElement("li")
+      let button = document.createElement("button")
+
+      button.classList = "release"
+      button.setAttribute("data-pokemon-id", 99)
+      button.innerText = "Release"
+      button.addEventListener('click', (e) => {
+        ul.removeChild(li)
+      });
+
+      li.innerText = `${pokemon.nickname} (Species: ${pokemon.species})`
+      li.append(button)
+      ul.appendChild(li)
+
+    }
+
     card.classList = "card"
     card.setAttribute("data-id", trainer.id)
 

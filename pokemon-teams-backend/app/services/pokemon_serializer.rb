@@ -6,19 +6,9 @@ class PokemonSerializer
 
   def to_serialized_json
     options = {
-      include: {
-        pokemons: {
-          only: [:nickname, :species]
-        }
-      },
-      except: [:updated_at],
+      except: [:updated_at, :created_at],
     }
     @pokemon.to_json(options)
   end
+  
 end
-
-
-# "id":140,
-# "nickname":"Jacey",
-# "species":"Kakuna",
-# "trainer_id":1

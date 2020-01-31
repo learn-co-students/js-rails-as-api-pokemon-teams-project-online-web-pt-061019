@@ -3,4 +3,9 @@ class PokemonsController < ApplicationController
     pokemons = Pokemon.all
     render json: pokemons
   end
+
+  def show
+    pokemon = Pokemon.find_by_id(params[:id])
+    render json: PokemonSerializer.new(pokemon).to_serialized_json
+  end
 end

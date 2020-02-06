@@ -80,7 +80,7 @@ function buildCard(json) {
     button.setAttribute("data-trainer-id", trainer.id)
 
     button.addEventListener('click', (e) => {
-        addPokemon(e);
+        addPokemon(e, trainer);
     });
 
     card.append(p)
@@ -92,7 +92,59 @@ function buildCard(json) {
 }
 
 // When the "Add Pokemon" button is clicked, add a new pokemon to their team
-function addPokemon(e) {
+function addPokemon(e, trainer) {
+
+  // Add a brand new pokemon
+  console.log("Add pokemon is running...")
+  console.log(trainer)
+
+  let data = {
+    trainer_id: trainer.id,
+  }
+
+  let options = {
+    method: 'POST',
+    headers: {
+         "Content-Type": "application/json",
+         // "Accept": "application/json"
+       },
+   body: JSON.stringify(data)
+  }
+
+  // console.log(options)
+
+  fetch(POKEMONS_URL, options)
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(p){
+    // Use this data inside of `json` to do DOM manipulation
+    // console.log(p)
+    // Yo, a new pokemon!
+    // console.log(p)
+    //
+    // return p.json();
+    buildPokemon(e, p);
+  })
+
+  // fetch(TRAINERS_URL)
+  // .then(function(response) {
+  //   return response.json();
+  // })
+  // .then(function(json){
+  //   // Use this data inside of `json` to do DOM manipulation
+  //   buildCard(json);
+  // })
+
+  // console.log(`NEW POKEMONE: ${p}`)
+
+
+
+}
+
+function buildPokemon(e, p) {
+  console.log("Yo!")
+  console.log(e.target)
 
   let ul = e.target.nextSibling
   let li = document.createElement("li")
@@ -105,7 +157,7 @@ function addPokemon(e) {
     ul.removeChild(li)
   });
 
-  li.innerText = "Test Pokemon"
+  li.innerText = `${p.nickname} (Species: ${p.species})`
   li.append(button)
 
   if (ul.childElementCount < 6) {
@@ -113,5 +165,4 @@ function addPokemon(e) {
   } else {
     console.log("Sorry, a Pokemon trainer can only have 6 Pokemon on their team.")
   }
-
 }

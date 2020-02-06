@@ -10,5 +10,4 @@ class PokemonSerializer
     }
     @pokemon.to_json(options)
   end
-  
 end

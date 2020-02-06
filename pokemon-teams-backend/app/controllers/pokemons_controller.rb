@@ -25,4 +25,9 @@ class PokemonsController < ApplicationController
     new_poke.save
     render json: PokemonSerializer.new(new_poke).to_serialized_json
   end
+
+  def destroy
+    pokemon = Pokemon.find_by_id(params[:id])
+    pokemon.destroy
+  end
 end

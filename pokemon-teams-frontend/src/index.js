@@ -1,92 +1,54 @@
 const BASE_URL = "http://localhost:3000"
 const TRAINERS_URL = `${BASE_URL}/trainers`
 const POKEMONS_URL = `${BASE_URL}/pokemons`
+const mainDiv = document.querySelector('main')
 
 
-///DOM Content Loaded
-document.addEventListener("DOMContentLoaded", function() {
+fetch(TRAINERS_URL)
+  .then(res => res.json())
+  .then(putTrainersOnPage)
+  // .then(json => console.log(json))
+  
 
-  // /invoke GET fetch
-  fetchTrainers();
-  
-  
-  // GET fetch for trainers w/their pokemon
-  function fetchTrainers() {
-      fetch(TRAINERS_URL)
-      .then(response => response.json())
-      .then(data => {
-          data.forEach(renderTrainers);
-      });
-  }
-  
-  
-  // Render trainers & their pokemon
-  function renderTrainers(trainer) {
-      const trainerContainer = document.getElementById("main-container");
-      trainerContainer.insertAdjacentHTML("beforeend",
-      `
-          <div class="card" data-id=${trainer.id}><p>${trainer.name}</p>
-          <button class="new" data-id=${trainer.id}>Add Pokemon</button>
-          <ul id="trainer-${trainer.id}">
-          
-          </ul>
-          </div>
-      `
-      );
-      const pokemonContainer = document.getElementById(`trainer-${trainer.id}`);
-      trainer.pokemons.forEach(pokemon => {pokemonContainer.insertAdjacentHTML("beforeend",
-      `
-          <li>${pokemon.nickname} (${pokemon.species}) 
-          <button class="release" data-id=${pokemon.id}>
-          Release</button></li>
-      `
-      );
-      });
-  }
-  
-  // main container target
-  let mainContainer = document.querySelector("#main-container")
-  
-  
-  // DELETE fetch for Pokemon
-  mainContainer.addEventListener("click", function(e){
-      if (e.target.className === "release") {
-          e.target.parentNode.remove()
-          let id = e.target.dataset.id
-          fetch(`http://localhost:3000/pokemons/${id}`, {
-          method: 'DELETE'
-          })   
-      }
+function putTrainersOnPage(trainers){
+  // console.log(trainers)
+  trainers.forEach(trainer => {
+  console.log(trainer)
+    let pokString = ""
+    trainer.pokemons.forEach(pokemon => {
+      pokString += `<li>${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+    })
+    mainDiv.innerHTML += `
+    <div class="card" data-id="${trainer.id}"><p>${trainer.name}</p>
+      <button data-trainer-id="${trainer.id}">Add Pokemon</button>
+      <ul>${pokString}</ul>
+    </div>
+    `
   })
-  
-  //POST fetch for Pokemon
-  mainContainer.addEventListener("click", function(e){
-      if (e.target.className === "new"){
-          console.log(e.target.dataset.id)
-          let id = e.target.dataset.id
-          fetch("http://localhost:3000/pokemons", {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              trainer_id: parseInt(id)
-          })
-          })
-          .then(response => response.json())
-          .then(data =>{
-          const pokemonContainer = document.getElementById(`trainer-${id}`);
-          pokemonContainer.insertAdjacentHTML("beforeend",
-          `
-          <li>${data.nickname} (${data.species}) 
-          <button class="release" data-id=${data.id}>
-          Release</button></li>
-          `
-          )}
-          );
-      } 
+
+  mainDiv.addEventListener('click', e => {
+    if (e.target.dataset.trainerId !== undefined) {
+      fetch(POKEMONS_URL, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          trainer_id: e.target.dataset.trainerId
+        })
+      })
+        .then(res => res.json())
+        .then(addPokemon)
+    }
+    if (e.target.dataset.pokemonId !== undefined){
+      e.target.parentElement.remove()
+      fetch(POKEMONS_URL + '/' + e.target.dataset.pokemonId, {method : 'DELETE'})
+    }
   })
-  
-  
-  // / close DOM Content Loaded
-});
+
+  function addPokemon(pokemon){
+    mainDiv.children[pokemon.trainer_id-1].lastElementChild.innerHTML += `<li>${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+  }
+
+
+}
